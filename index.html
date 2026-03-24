@@ -317,7 +317,7 @@
     <!-- START SCREEN -->
     <div class="screen active" id="screen-start">
       <div class="big-title">Times Tables<br>Challenge!</div>
-      <div class="subtitle">10 questions · single digits</div>
+      <div class="subtitle">get 10 right · single digits</div>
       <div class="pb-display">
         <div class="pb-label">Your Personal Best</div>
         <div class="pb-value" id="start-pb-value"><span class="pb-none">No record yet</span></div>
@@ -330,7 +330,7 @@
       <div class="progress-bar-wrap">
         <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
       </div>
-      <div class="q-counter" id="q-counter">Question 1 of 10</div>
+      <div class="q-counter" id="q-counter">0 of 10 correct</div>
       <div class="question" id="question-text">? × ? = </div>
       <input
         class="answer-input"
@@ -361,7 +361,7 @@
 const TOTAL = 10;
 const PB_KEY = 'mathquiz_pb';
 
-let questions = [], current = 0, correct = 0, startTime = 0, answering = true;
+let correct = 0, startTime = 0, answering = true;
 
 function getPB() {
   const v = localStorage.getItem(PB_KEY);
@@ -389,32 +389,28 @@ function updateStartPB() {
   el.innerHTML = pb ? `<span style="color:var(--yellow);font-family:'Fredoka One',cursive;font-size:2rem">${fmt(pb)}</span>` : '<span class="pb-none">No record yet</span>';
 }
 
-function generateQuestions() {
-  const qs = [];
-  while (qs.length < TOTAL) {
-    const a = Math.floor(Math.random() * 9) + 1;
-    const b = Math.floor(Math.random() * 9) + 1;
-    qs.push([a, b]);
-  }
-  return qs;
+function randomQuestion() {
+  const a = Math.floor(Math.random() * 9) + 1;
+  const b = Math.floor(Math.random() * 9) + 1;
+  return [a, b];
 }
 
+let currentQ = null;
+
 function startQuiz() {
-  questions = generateQuestions();
-  current = 0;
   correct = 0;
   answering = true;
   updateStartPB();
-  showQuestion();
   showScreen('screen-quiz');
   startTime = performance.now();
-  document.getElementById('answer-input').focus();
+  showQuestion();
 }
 
 function showQuestion() {
-  const [a, b] = questions[current];
-  document.getElementById('q-counter').textContent = `Question ${current + 1} of ${TOTAL}`;
-  document.getElementById('progress-fill').style.width = `${(current / TOTAL) * 100}%`;
+  currentQ = randomQuestion();
+  const [a, b] = currentQ;
+  document.getElementById('q-counter').textContent = `${correct} of ${TOTAL} correct`;
+  document.getElementById('progress-fill').style.width = `${(correct / TOTAL) * 100}%`;
   document.getElementById('question-text').innerHTML = `<span>${a}</span> × <span>${b}</span>`;
   const inp = document.getElementById('answer-input');
   inp.value = '';
@@ -435,78 +431,63 @@ function submitAnswer() {
   const val = inp.value.trim();
   if (val === '' || isNaN(val)) return;
 
-  const [a, b] = questions[current];
+  const [a, b] = currentQ;
   const userAns = parseInt(val);
   const rightAns = a * b;
   const fb = document.getElementById('feedback');
+
+  answering = false;
 
   if (userAns === rightAns) {
     inp.classList.add('correct');
     fb.textContent = '✓ Correct!';
     fb.className = 'feedback correct';
     correct++;
+
+    if (correct === TOTAL) {
+      setTimeout(() => showResult(), 700);
+    } else {
+      setTimeout(() => showQuestion(), 700);
+    }
   } else {
     inp.classList.add('wrong');
-    fb.textContent = `✗ It's ${rightAns}`;
+    fb.textContent = `✗ It's ${rightAns} — try again!`;
     fb.className = 'feedback wrong';
+    setTimeout(() => showQuestion(), 900);
   }
-
-  answering = false;
-  current++;
-
-  setTimeout(() => {
-    if (current < TOTAL) {
-      showQuestion();
-    } else {
-      showResult();
-    }
-  }, 700);
 }
 
 function showResult() {
   const elapsed = (performance.now() - startTime) / 1000;
-  const perfect = correct === TOTAL;
 
-  document.getElementById('result-icon').textContent = perfect ? '🏆' : '💪';
-  document.getElementById('result-title').textContent = perfect ? 'Perfect Round!' : 'Keep Practising!';
+  document.getElementById('result-icon').textContent = '🏆';
+  document.getElementById('result-title').textContent = 'You did it!';
+  document.getElementById('result-subtitle').textContent = 'All 10 correct!';
 
   const section = document.getElementById('result-time-section');
+  const pb = getPB();
+  const isNewBest = pb === null || elapsed < pb;
+  if (isNewBest) savePB(elapsed);
 
-  if (perfect) {
-    document.getElementById('result-subtitle').textContent = 'You got all 10 correct!';
-    const pb = getPB();
-    const isNewBest = pb === null || elapsed < pb;
-    if (isNewBest) savePB(elapsed);
-
-    let badgeHTML = '';
-    if (isNewBest) {
-      badgeHTML = `<div class="new-best-badge">${pb === null ? '⭐ First record set!' : '🏆 New personal best!'}</div>`;
-    } else {
-      const diff = elapsed - pb;
-      badgeHTML = `<div class="prev-best">Personal best: ${fmt(pb)} &nbsp;(${fmt(diff)} off)</div>`;
-    }
-
-    section.innerHTML = `
-      <div class="time-box">
-        <div class="time-label">Your time</div>
-        <div class="time-value">${fmt(elapsed)}</div>
-        ${badgeHTML}
-      </div>
-    `;
-    launchConfetti();
+  let badgeHTML = '';
+  if (isNewBest) {
+    badgeHTML = `<div class="new-best-badge">${pb === null ? '⭐ First record set!' : '🏆 New personal best!'}</div>`;
   } else {
-    const missed = TOTAL - correct;
-    document.getElementById('result-subtitle').textContent = '';
-    section.innerHTML = `
-      <div class="miss-msg">
-        You missed <strong>${missed} question${missed > 1 ? 's' : ''}</strong>.<br>
-        Get all 10 right to set a time record!
-      </div>
-    `;
+    const diff = elapsed - pb;
+    badgeHTML = `<div class="prev-best">Personal best: ${fmt(pb)} &nbsp;(${fmt(diff)} off)</div>`;
   }
+
+  section.innerHTML = `
+    <div class="time-box">
+      <div class="time-label">Your time</div>
+      <div class="time-value">${fmt(elapsed)}</div>
+      ${badgeHTML}
+    </div>
+  `;
 
   showScreen('screen-result');
   updateStartPB();
+  launchConfetti();
 }
 
 function launchConfetti() {
