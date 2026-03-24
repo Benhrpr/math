@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Times Tables Challenge!</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --yellow: #FFD93D;
+    --orange: #FF6B35;
+    --green: #06D6A0;
+    --blue: #4CC9F0;
+    --pink: #FF70A6;
+    --purple: #9B5DE5;
+    --bg: #1a1a2e;
+    --card: #16213e;
+    --card2: #0f3460;
+    --text: #ffffff;
+    --muted: rgba(255,255,255,0.6);
+  }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    overflow-x: hidden;
+  }
+
+  .stars {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 30% 50%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 60% 20%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 70%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 50% 85%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 90% 40%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 20% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 55%, rgba(255,255,255,0.4) 0%, transparent 100%);
+  }
+
+  .wrap {
+    position: relative; z-index: 1;
+    width: 100%; max-width: 480px;
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: 28px;
+    padding: 2.5rem 2rem;
+    border: 2px solid rgba(255,255,255,0.08);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* START SCREEN */
+  .big-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2.8rem;
+    line-height: 1.1;
+    text-align: center;
+    background: linear-gradient(135deg, var(--yellow), var(--orange), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: var(--muted);
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .pb-display {
+    background: var(--card2);
+    border-radius: 16px;
+    padding: 1rem 1.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    border: 1.5px solid rgba(255,255,255,0.1);
+  }
+
+  .pb-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .pb-value {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    color: var(--yellow);
+  }
+
+  .pb-none { color: var(--muted); font-size: 1rem; font-style: italic; }
+
+  .btn {
+    display: block; width: 100%;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.4rem;
+    padding: 1rem;
+    border: none; border-radius: 16px;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    letter-spacing: 0.03em;
+  }
+
+  .btn:active { transform: scale(0.97); }
+
+  .btn-start {
+    background: linear-gradient(135deg, var(--orange), var(--pink));
+    color: white;
+    box-shadow: 0 6px 24px rgba(255,107,53,0.4);
+  }
+
+  .btn-start:hover { box-shadow: 0 8px 30px rgba(255,107,53,0.6); }
+
+  /* QUIZ SCREEN */
+  .progress-bar-wrap {
+    background: rgba(255,255,255,0.1);
+    border-radius: 99px;
+    height: 8px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--blue), var(--purple));
+    transition: width 0.4s ease;
+  }
+
+  .q-counter {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .question {
+    font-family: 'Fredoka One', cursive;
+    font-size: 3.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--text);
+    letter-spacing: 0.02em;
+  }
+
+  .question span { color: var(--yellow); }
+
+  .answer-input {
+    display: block; width: 100%;
+    background: var(--card2);
+    border: 2.5px solid rgba(255,255,255,0.15);
+    border-radius: 16px;
+    color: var(--text);
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    padding: 0.8rem 1rem;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s;
+    -moz-appearance: textfield;
+  }
+
+  .answer-input::-webkit-inner-spin-button,
+  .answer-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+  .answer-input:focus { border-color: var(--blue); }
+
+  .answer-input.correct { border-color: var(--green); background: rgba(6,214,160,0.12); }
+  .answer-input.wrong { border-color: var(--pink); background: rgba(255,112,166,0.12); }
+
+  .feedback {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    min-height: 1.8rem;
+    margin-top: 1rem;
+    transition: opacity 0.2s;
+  }
+
+  .feedback.correct { color: var(--green); }
+  .feedback.wrong { color: var(--pink); }
+
+  .btn-submit {
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    color: white;
+    box-shadow: 0 6px 24px rgba(76,201,240,0.3);
+    margin-top: 1.5rem;
+  }
+
+  /* RESULT SCREEN */
+  .result-icon {
+    font-size: 4rem;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .result-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2.2rem;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .result-subtitle {
+    text-align: center;
+    color: var(--muted);
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .time-box {
+    background: var(--card2);
+    border-radius: 20px;
+    padding: 1.5rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    border: 1.5px solid rgba(255,255,255,0.1);
+  }
+
+  .time-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .time-value {
+    font-family: 'Fredoka One', cursive;
+    font-size: 3rem;
+    color: var(--blue);
+  }
+
+  .new-best-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--yellow), var(--orange));
+    color: #1a1a2e;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 4px 14px;
+    border-radius: 99px;
+    margin-top: 8px;
+    letter-spacing: 0.05em;
+  }
+
+  .prev-best {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-top: 6px;
+  }
+
+  .miss-msg {
+    text-align: center;
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  .miss-msg strong { color: var(--text); }
+
+  .btn-again {
+    background: linear-gradient(135deg, var(--green), var(--blue));
+    color: white;
+    box-shadow: 0 6px 24px rgba(6,214,160,0.3);
+    margin-top: 0.5rem;
+  }
+
+  .confetti {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 999;
+    overflow: hidden;
+  }
+
+  .confetti-piece {
+    position: absolute;
+    width: 10px; height: 10px;
+    top: -20px;
+    animation: fall linear forwards;
+    border-radius: 2px;
+  }
+
+  @keyframes fall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="stars"></div>
+<div class="confetti" id="confetti"></div>
+
+<div class="wrap">
+  <div class="card">
+
+    <!-- START SCREEN -->
+    <div class="screen active" id="screen-start">
+      <div class="big-title">Times Tables<br>Challenge!</div>
+      <div class="subtitle">10 questions · single digits</div>
+      <div class="pb-display">
+        <div class="pb-label">Your Personal Best</div>
+        <div class="pb-value" id="start-pb-value"><span class="pb-none">No record yet</span></div>
+      </div>
+      <button class="btn btn-start" onclick="startQuiz()">Let's Go!</button>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div class="screen" id="screen-quiz">
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+      <div class="q-counter" id="q-counter">Question 1 of 10</div>
+      <div class="question" id="question-text">? × ? = </div>
+      <input
+        class="answer-input"
+        id="answer-input"
+        type="number"
+        inputmode="numeric"
+        placeholder="?"
+        autocomplete="off"
+        onkeydown="handleKey(event)"
+      />
+      <div class="feedback" id="feedback"></div>
+      <button class="btn btn-submit" onclick="submitAnswer()">Check ✓</button>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div class="screen" id="screen-result">
+      <div class="result-icon" id="result-icon">🎉</div>
+      <div class="result-title" id="result-title">Perfect!</div>
+      <div class="result-subtitle" id="result-subtitle">You got all 10 correct!</div>
+      <div id="result-time-section"></div>
+      <button class="btn btn-again" onclick="startQuiz()">Play Again</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const TOTAL = 10;
+const PB_KEY = 'mathquiz_pb';
+
+let questions = [], current = 0, correct = 0, startTime = 0, answering = true;
+
+function getPB() {
+  const v = localStorage.getItem(PB_KEY);
+  return v ? parseFloat(v) : null;
+}
+
+function savePB(t) {
+  localStorage.setItem(PB_KEY, t.toFixed(2));
+}
+
+function fmt(s) {
+  const m = Math.floor(s / 60);
+  const sec = (s % 60).toFixed(1);
+  return m > 0 ? `${m}m ${sec}s` : `${sec}s`;
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function updateStartPB() {
+  const pb = getPB();
+  const el = document.getElementById('start-pb-value');
+  el.innerHTML = pb ? `<span style="color:var(--yellow);font-family:'Fredoka One',cursive;font-size:2rem">${fmt(pb)}</span>` : '<span class="pb-none">No record yet</span>';
+}
+
+function generateQuestions() {
+  const qs = [];
+  while (qs.length < TOTAL) {
+    const a = Math.floor(Math.random() * 9) + 1;
+    const b = Math.floor(Math.random() * 9) + 1;
+    qs.push([a, b]);
+  }
+  return qs;
+}
+
+function startQuiz() {
+  questions = generateQuestions();
+  current = 0;
+  correct = 0;
+  answering = true;
+  updateStartPB();
+  showQuestion();
+  showScreen('screen-quiz');
+  startTime = performance.now();
+  document.getElementById('answer-input').focus();
+}
+
+function showQuestion() {
+  const [a, b] = questions[current];
+  document.getElementById('q-counter').textContent = `Question ${current + 1} of ${TOTAL}`;
+  document.getElementById('progress-fill').style.width = `${(current / TOTAL) * 100}%`;
+  document.getElementById('question-text').innerHTML = `<span>${a}</span> × <span>${b}</span>`;
+  const inp = document.getElementById('answer-input');
+  inp.value = '';
+  inp.className = 'answer-input';
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('feedback').className = 'feedback';
+  answering = true;
+  setTimeout(() => inp.focus(), 50);
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter') submitAnswer();
+}
+
+function submitAnswer() {
+  if (!answering) return;
+  const inp = document.getElementById('answer-input');
+  const val = inp.value.trim();
+  if (val === '' || isNaN(val)) return;
+
+  const [a, b] = questions[current];
+  const userAns = parseInt(val);
+  const rightAns = a * b;
+  const fb = document.getElementById('feedback');
+
+  if (userAns === rightAns) {
+    inp.classList.add('correct');
+    fb.textContent = '✓ Correct!';
+    fb.className = 'feedback correct';
+    correct++;
+  } else {
+    inp.classList.add('wrong');
+    fb.textContent = `✗ It's ${rightAns}`;
+    fb.className = 'feedback wrong';
+  }
+
+  answering = false;
+  current++;
+
+  setTimeout(() => {
+    if (current < TOTAL) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  }, 700);
+}
+
+function showResult() {
+  const elapsed = (performance.now() - startTime) / 1000;
+  const perfect = correct === TOTAL;
+
+  document.getElementById('result-icon').textContent = perfect ? '🏆' : '💪';
+  document.getElementById('result-title').textContent = perfect ? 'Perfect Round!' : 'Keep Practising!';
+
+  const section = document.getElementById('result-time-section');
+
+  if (perfect) {
+    document.getElementById('result-subtitle').textContent = 'You got all 10 correct!';
+    const pb = getPB();
+    const isNewBest = pb === null || elapsed < pb;
+    if (isNewBest) savePB(elapsed);
+
+    let badgeHTML = '';
+    if (isNewBest) {
+      badgeHTML = `<div class="new-best-badge">${pb === null ? '⭐ First record set!' : '🏆 New personal best!'}</div>`;
+    } else {
+      const diff = elapsed - pb;
+      badgeHTML = `<div class="prev-best">Personal best: ${fmt(pb)} &nbsp;(${fmt(diff)} off)</div>`;
+    }
+
+    section.innerHTML = `
+      <div class="time-box">
+        <div class="time-label">Your time</div>
+        <div class="time-value">${fmt(elapsed)}</div>
+        ${badgeHTML}
+      </div>
+    `;
+    launchConfetti();
+  } else {
+    const missed = TOTAL - correct;
+    document.getElementById('result-subtitle').textContent = '';
+    section.innerHTML = `
+      <div class="miss-msg">
+        You missed <strong>${missed} question${missed > 1 ? 's' : ''}</strong>.<br>
+        Get all 10 right to set a time record!
+      </div>
+    `;
+  }
+
+  showScreen('screen-result');
+  updateStartPB();
+}
+
+function launchConfetti() {
+  const container = document.getElementById('confetti');
+  container.innerHTML = '';
+  const colors = ['#FFD93D','#FF6B35','#FF70A6','#4CC9F0','#06D6A0','#9B5DE5'];
+  for (let i = 0; i < 80; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+    p.style.width = (Math.random() * 8 + 6) + 'px';
+    p.style.height = (Math.random() * 8 + 6) + 'px';
+    p.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    p.style.animationDuration = (Math.random() * 2 + 2) + 's';
+    p.style.animationDelay = (Math.random() * 1.5) + 's';
+    container.appendChild(p);
+  }
+  setTimeout(() => container.innerHTML = '', 5000);
+}
+
+updateStartPB();
+</script>
+</body>
+</html>
