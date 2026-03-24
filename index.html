@@ -48,10 +48,7 @@
       radial-gradient(1px 1px at 70% 55%, rgba(255,255,255,0.4) 0%, transparent 100%);
   }
 
-  .wrap {
-    position: relative; z-index: 1;
-    width: 100%; max-width: 480px;
-  }
+  .wrap { position: relative; z-index: 1; width: 100%; max-width: 480px; }
 
   .card {
     background: var(--card);
@@ -64,7 +61,7 @@
   .screen { display: none; }
   .screen.active { display: block; }
 
-  /* START SCREEN */
+  /* ── START SCREEN ── */
   .big-title {
     font-family: 'Fredoka One', cursive;
     font-size: 2.8rem;
@@ -74,40 +71,95 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
   }
 
   .subtitle {
     text-align: center;
     color: var(--muted);
     font-size: 1rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
   }
 
-  .pb-display {
-    background: var(--card2);
-    border-radius: 16px;
-    padding: 1rem 1.5rem;
-    text-align: center;
-    margin-bottom: 2rem;
-    border: 1.5px solid rgba(255,255,255,0.1);
-  }
-
-  .pb-label {
-    font-size: 0.75rem;
+  .section-label {
+    font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--muted);
-    margin-bottom: 4px;
+    text-align: center;
+    margin-bottom: 0.6rem;
   }
 
-  .pb-value {
+  .diff-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+  }
+
+  .diff-btn {
     font-family: 'Fredoka One', cursive;
-    font-size: 2rem;
-    color: var(--yellow);
+    font-size: 1.05rem;
+    padding: 0.7rem 0.4rem;
+    border-radius: 14px;
+    border: 2.5px solid transparent;
+    cursor: pointer;
+    transition: transform 0.1s, border-color 0.15s, box-shadow 0.15s;
+    color: #1a1a2e;
+    line-height: 1.2;
   }
 
-  .pb-none { color: var(--muted); font-size: 1rem; font-style: italic; }
+  .diff-btn:active { transform: scale(0.96); }
+  .diff-btn.easy  { background: var(--green);  }
+  .diff-btn.med   { background: var(--yellow); }
+  .diff-btn.hard  { background: var(--pink);   }
+
+  .diff-btn.selected {
+    border-color: white;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.2);
+  }
+
+  .diff-range {
+    display: block;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    margin-top: 2px;
+    opacity: 0.7;
+  }
+
+  .pb-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+  }
+
+  .pb-cell {
+    background: var(--card2);
+    border-radius: 14px;
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+    border: 1.5px solid rgba(255,255,255,0.08);
+  }
+
+  .pb-cell-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+
+  .pb-cell-val {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.15rem;
+  }
+
+  .c-easy { color: var(--green);  }
+  .c-med  { color: var(--yellow); }
+  .c-hard { color: var(--pink);   }
+  .c-none { color: var(--muted); font-size: 0.85rem; font-style: italic; font-family: 'Nunito', sans-serif; }
 
   .btn {
     display: block; width: 100%;
@@ -126,40 +178,85 @@
     background: linear-gradient(135deg, var(--orange), var(--pink));
     color: white;
     box-shadow: 0 6px 24px rgba(255,107,53,0.4);
+    margin-bottom: 0.75rem;
   }
 
   .btn-start:hover { box-shadow: 0 8px 30px rgba(255,107,53,0.6); }
 
-  /* QUIZ SCREEN */
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.55rem;
+    border: 1.5px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+    letter-spacing: 0;
+  }
+
+  .btn-ghost:hover { color: var(--pink); border-color: var(--pink); }
+  .btn-ghost.blue:hover { color: var(--blue); border-color: var(--blue); }
+
+  /* ── QUIZ SCREEN ── */
+  .quiz-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .q-counter {
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .live-timer {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.5rem;
+    min-width: 80px;
+    text-align: right;
+    color: var(--green);
+    transition: color 0.4s;
+  }
+
   .progress-bar-wrap {
     background: rgba(255,255,255,0.1);
     border-radius: 99px;
     height: 8px;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     overflow: hidden;
   }
 
   .progress-bar-fill {
     height: 100%;
     border-radius: 99px;
-    background: linear-gradient(90deg, var(--blue), var(--purple));
     transition: width 0.4s ease;
   }
 
-  .q-counter {
+  .bar-easy { background: linear-gradient(90deg, #06D6A0, #4CC9F0); }
+  .bar-med  { background: linear-gradient(90deg, #FFD93D, #FF6B35); }
+  .bar-hard { background: linear-gradient(90deg, #FF70A6, #9B5DE5); }
+
+  .mode-badge {
+    display: block;
     text-align: center;
-    color: var(--muted);
-    font-size: 0.85rem;
-    margin-bottom: 0.5rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
   }
 
   .question {
     font-family: 'Fredoka One', cursive;
     font-size: 3.5rem;
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.8rem;
     color: var(--text);
     letter-spacing: 0.02em;
   }
@@ -184,10 +281,9 @@
   .answer-input::-webkit-inner-spin-button,
   .answer-input::-webkit-outer-spin-button { -webkit-appearance: none; }
 
-  .answer-input:focus { border-color: var(--blue); }
-
-  .answer-input.correct { border-color: var(--green); background: rgba(6,214,160,0.12); }
-  .answer-input.wrong { border-color: var(--pink); background: rgba(255,112,166,0.12); }
+  .answer-input:focus   { border-color: var(--blue);  }
+  .answer-input.correct { border-color: var(--green); background: rgba(6,214,160,0.12);   }
+  .answer-input.wrong   { border-color: var(--pink);  background: rgba(255,112,166,0.12); }
 
   .feedback {
     text-align: center;
@@ -195,11 +291,10 @@
     font-weight: 700;
     min-height: 1.8rem;
     margin-top: 1rem;
-    transition: opacity 0.2s;
   }
 
   .feedback.correct { color: var(--green); }
-  .feedback.wrong { color: var(--pink); }
+  .feedback.wrong   { color: var(--pink);  }
 
   .btn-submit {
     background: linear-gradient(135deg, var(--blue), var(--purple));
@@ -208,25 +303,21 @@
     margin-top: 1.5rem;
   }
 
-  /* RESULT SCREEN */
-  .result-icon {
-    font-size: 4rem;
-    text-align: center;
-    margin-bottom: 1rem;
-  }
+  /* ── RESULT SCREEN ── */
+  .result-icon  { font-size: 4rem; text-align: center; margin-bottom: 1rem; }
 
   .result-title {
     font-family: 'Fredoka One', cursive;
     font-size: 2.2rem;
     text-align: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.3rem;
   }
 
   .result-subtitle {
     text-align: center;
     color: var(--muted);
     font-size: 1rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
   }
 
   .time-box {
@@ -264,45 +355,21 @@
     letter-spacing: 0.05em;
   }
 
-  .prev-best {
-    color: var(--muted);
-    font-size: 0.9rem;
-    margin-top: 6px;
-  }
-
-  .miss-msg {
-    text-align: center;
-    font-size: 1rem;
-    color: var(--muted);
-    margin-bottom: 2rem;
-    line-height: 1.6;
-  }
-
-  .miss-msg strong { color: var(--text); }
+  .prev-best { color: var(--muted); font-size: 0.9rem; margin-top: 6px; }
 
   .btn-again {
     background: linear-gradient(135deg, var(--green), var(--blue));
     color: white;
     box-shadow: 0 6px 24px rgba(6,214,160,0.3);
-    margin-top: 0.5rem;
+    margin-bottom: 0.75rem;
   }
 
-  .confetti {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none; z-index: 999;
-    overflow: hidden;
-  }
-
-  .confetti-piece {
-    position: absolute;
-    width: 10px; height: 10px;
-    top: -20px;
-    animation: fall linear forwards;
-    border-radius: 2px;
-  }
+  /* confetti */
+  .confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; overflow: hidden; }
+  .confetti-piece { position: absolute; top: -20px; animation: fall linear forwards; border-radius: 2px; }
 
   @keyframes fall {
-    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
     100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
   }
 </style>
@@ -317,21 +384,52 @@
     <!-- START SCREEN -->
     <div class="screen active" id="screen-start">
       <div class="big-title">Times Tables<br>Challenge!</div>
-      <div class="subtitle">get 10 right · single digits</div>
-      <div class="pb-display">
-        <div class="pb-label">Your Personal Best</div>
-        <div class="pb-value" id="start-pb-value"><span class="pb-none">No record yet</span></div>
+      <div class="subtitle">get 10 right · keep going till you do!</div>
+
+      <div class="section-label">Choose difficulty</div>
+      <div class="diff-btns">
+        <button class="diff-btn easy selected" onclick="selectDiff('easy')">
+          Easy <span class="diff-range">2, 5, 10</span>
+        </button>
+        <button class="diff-btn med" onclick="selectDiff('med')">
+          Medium <span class="diff-range">3, 4, 6</span>
+        </button>
+        <button class="diff-btn hard" onclick="selectDiff('hard')">
+          Hard <span class="diff-range">7, 8, 9</span>
+        </button>
       </div>
+
+      <div class="section-label" style="margin-bottom:0.5rem">Personal bests</div>
+      <div class="pb-grid">
+        <div class="pb-cell">
+          <div class="pb-cell-label">Easy</div>
+          <div class="pb-cell-val" id="pb-easy">—</div>
+        </div>
+        <div class="pb-cell">
+          <div class="pb-cell-label">Medium</div>
+          <div class="pb-cell-val" id="pb-med">—</div>
+        </div>
+        <div class="pb-cell">
+          <div class="pb-cell-label">Hard</div>
+          <div class="pb-cell-val" id="pb-hard">—</div>
+        </div>
+      </div>
+
       <button class="btn btn-start" onclick="startQuiz()">Let's Go!</button>
+      <button class="btn btn-ghost" onclick="resetPBs()">Reset personal bests</button>
     </div>
 
     <!-- QUIZ SCREEN -->
     <div class="screen" id="screen-quiz">
-      <div class="progress-bar-wrap">
-        <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+      <div class="quiz-top">
+        <div class="q-counter" id="q-counter">0 / 10 correct</div>
+        <div class="live-timer" id="live-timer">0.0s</div>
       </div>
-      <div class="q-counter" id="q-counter">0 of 10 correct</div>
-      <div class="question" id="question-text">? × ? = </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill bar-easy" id="progress-fill" style="width:0%"></div>
+      </div>
+      <div class="mode-badge c-easy" id="mode-badge">Easy · 2, 5, 10</div>
+      <div class="question" id="question-text">? × ?</div>
       <input
         class="answer-input"
         id="answer-input"
@@ -347,11 +445,12 @@
 
     <!-- RESULT SCREEN -->
     <div class="screen" id="screen-result">
-      <div class="result-icon" id="result-icon">🎉</div>
-      <div class="result-title" id="result-title">Perfect!</div>
-      <div class="result-subtitle" id="result-subtitle">You got all 10 correct!</div>
+      <div class="result-icon">🏆</div>
+      <div class="result-title">You did it!</div>
+      <div class="result-subtitle" id="result-subtitle">All 10 correct!</div>
       <div id="result-time-section"></div>
       <button class="btn btn-again" onclick="startQuiz()">Play Again</button>
+      <button class="btn btn-ghost blue" style="margin-top:0" onclick="goHome()">Change difficulty</button>
     </div>
 
   </div>
@@ -359,17 +458,25 @@
 
 <script>
 const TOTAL = 10;
-const PB_KEY = 'mathquiz_pb';
+const PB_KEYS = { easy: 'mq_pb_easy', med: 'mq_pb_med', hard: 'mq_pb_hard' };
+const TABLES  = { easy: [2,5,10], med: [3,4,6], hard: [7,8,9] };
+const LABELS  = { easy: 'Easy · 2, 5, 10', med: 'Medium · 3, 4, 6', hard: 'Hard · 7, 8, 9' };
+const MODE_NAMES = { easy: 'Easy', med: 'Medium', hard: 'Hard' };
 
-let correct = 0, startTime = 0, answering = true;
+let mode = 'easy', correct = 0, startTime = 0, answering = true;
+let currentQ = null, timerRAF = null;
 
-function getPB() {
-  const v = localStorage.getItem(PB_KEY);
+function getPB(m) {
+  const v = localStorage.getItem(PB_KEYS[m]);
   return v ? parseFloat(v) : null;
 }
 
-function savePB(t) {
-  localStorage.setItem(PB_KEY, t.toFixed(2));
+function savePB(m, t) { localStorage.setItem(PB_KEYS[m], t.toFixed(2)); }
+
+function resetPBs() {
+  if (!confirm('Reset all personal bests? This cannot be undone.')) return;
+  Object.values(PB_KEYS).forEach(k => localStorage.removeItem(k));
+  refreshPBGrid();
 }
 
 function fmt(s) {
@@ -383,33 +490,76 @@ function showScreen(id) {
   document.getElementById(id).classList.add('active');
 }
 
-function updateStartPB() {
-  const pb = getPB();
-  const el = document.getElementById('start-pb-value');
-  el.innerHTML = pb ? `<span style="color:var(--yellow);font-family:'Fredoka One',cursive;font-size:2rem">${fmt(pb)}</span>` : '<span class="pb-none">No record yet</span>';
+function goHome() {
+  stopTimer();
+  showScreen('screen-start');
+  refreshPBGrid();
 }
 
-function randomQuestion() {
-  const a = Math.floor(Math.random() * 9) + 1;
-  const b = Math.floor(Math.random() * 9) + 1;
-  return [a, b];
+function selectDiff(m) {
+  mode = m;
+  document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelector(`.diff-btn.${m}`).classList.add('selected');
 }
 
-let currentQ = null;
+function refreshPBGrid() {
+  ['easy', 'med', 'hard'].forEach(m => {
+    const pb = getPB(m);
+    const el = document.getElementById(`pb-${m}`);
+    if (pb) {
+      el.className = `pb-cell-val c-${m}`;
+      el.textContent = fmt(pb);
+    } else {
+      el.className = 'pb-cell-val c-none';
+      el.textContent = '—';
+    }
+  });
+}
+
+function startTimer() {
+  const el = document.getElementById('live-timer');
+  function tick() {
+    const elapsed = (performance.now() - startTime) / 1000;
+    el.textContent = fmt(elapsed);
+    if      (elapsed < 30) el.style.color = 'var(--green)';
+    else if (elapsed < 60) el.style.color = 'var(--yellow)';
+    else                   el.style.color = 'var(--pink)';
+    timerRAF = requestAnimationFrame(tick);
+  }
+  timerRAF = requestAnimationFrame(tick);
+}
+
+function stopTimer() {
+  if (timerRAF) { cancelAnimationFrame(timerRAF); timerRAF = null; }
+}
 
 function startQuiz() {
   correct = 0;
   answering = true;
-  updateStartPB();
+
+  document.getElementById('progress-fill').className = `progress-bar-fill bar-${mode}`;
+  const badge = document.getElementById('mode-badge');
+  badge.className = `mode-badge c-${mode}`;
+  badge.textContent = LABELS[mode];
+
   showScreen('screen-quiz');
+  stopTimer();
   startTime = performance.now();
+  startTimer();
   showQuestion();
 }
 
+function randomQ() {
+  const tables = TABLES[mode];
+  const a = tables[Math.floor(Math.random() * tables.length)];
+  const b = Math.floor(Math.random() * 9) + 1;
+  return [a, b];
+}
+
 function showQuestion() {
-  currentQ = randomQuestion();
+  currentQ = randomQ();
   const [a, b] = currentQ;
-  document.getElementById('q-counter').textContent = `${correct} of ${TOTAL} correct`;
+  document.getElementById('q-counter').textContent = `${correct} / ${TOTAL} correct`;
   document.getElementById('progress-fill').style.width = `${(correct / TOTAL) * 100}%`;
   document.getElementById('question-text').innerHTML = `<span>${a}</span> × <span>${b}</span>`;
   const inp = document.getElementById('answer-input');
@@ -421,9 +571,7 @@ function showQuestion() {
   setTimeout(() => inp.focus(), 50);
 }
 
-function handleKey(e) {
-  if (e.key === 'Enter') submitAnswer();
-}
+function handleKey(e) { if (e.key === 'Enter') submitAnswer(); }
 
 function submitAnswer() {
   if (!answering) return;
@@ -443,7 +591,6 @@ function submitAnswer() {
     fb.textContent = '✓ Correct!';
     fb.className = 'feedback correct';
     correct++;
-
     if (correct === TOTAL) {
       setTimeout(() => showResult(), 700);
     } else {
@@ -458,35 +605,29 @@ function submitAnswer() {
 }
 
 function showResult() {
+  stopTimer();
   const elapsed = (performance.now() - startTime) / 1000;
 
-  document.getElementById('result-icon').textContent = '🏆';
-  document.getElementById('result-title').textContent = 'You did it!';
-  document.getElementById('result-subtitle').textContent = 'All 10 correct!';
+  document.getElementById('result-subtitle').textContent = `${MODE_NAMES[mode]} mode · all 10 correct!`;
 
-  const section = document.getElementById('result-time-section');
-  const pb = getPB();
-  const isNewBest = pb === null || elapsed < pb;
-  if (isNewBest) savePB(elapsed);
+  const pb = getPB(mode);
+  const isNew = pb === null || elapsed < pb;
+  if (isNew) savePB(mode, elapsed);
 
-  let badgeHTML = '';
-  if (isNewBest) {
-    badgeHTML = `<div class="new-best-badge">${pb === null ? '⭐ First record set!' : '🏆 New personal best!'}</div>`;
-  } else {
-    const diff = elapsed - pb;
-    badgeHTML = `<div class="prev-best">Personal best: ${fmt(pb)} &nbsp;(${fmt(diff)} off)</div>`;
-  }
+  const badgeHTML = isNew
+    ? `<div class="new-best-badge">${pb === null ? '⭐ First record!' : '🏆 New personal best!'}</div>`
+    : `<div class="prev-best">Personal best: ${fmt(pb)} &nbsp;(+${fmt(elapsed - pb)})</div>`;
 
-  section.innerHTML = `
+  document.getElementById('result-time-section').innerHTML = `
     <div class="time-box">
-      <div class="time-label">Your time</div>
+      <div class="time-label">Your time · ${MODE_NAMES[mode]}</div>
       <div class="time-value">${fmt(elapsed)}</div>
       ${badgeHTML}
     </div>
   `;
 
   showScreen('screen-result');
-  updateStartPB();
+  refreshPBGrid();
   launchConfetti();
 }
 
@@ -499,17 +640,17 @@ function launchConfetti() {
     p.className = 'confetti-piece';
     p.style.left = Math.random() * 100 + 'vw';
     p.style.background = colors[Math.floor(Math.random() * colors.length)];
-    p.style.width = (Math.random() * 8 + 6) + 'px';
+    p.style.width  = (Math.random() * 8 + 6) + 'px';
     p.style.height = (Math.random() * 8 + 6) + 'px';
     p.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
     p.style.animationDuration = (Math.random() * 2 + 2) + 's';
-    p.style.animationDelay = (Math.random() * 1.5) + 's';
+    p.style.animationDelay   = (Math.random() * 1.5) + 's';
     container.appendChild(p);
   }
   setTimeout(() => container.innerHTML = '', 5000);
 }
 
-updateStartPB();
+refreshPBGrid();
 </script>
 </body>
 </html>
